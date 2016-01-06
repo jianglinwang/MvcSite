@@ -5,7 +5,7 @@ using System.Web;
 
 namespace WebSite.Attribute
 {
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Field, AllowMultiple= true)]
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Field, AllowMultiple= true, Inherited=true)]
     public class GlobalResourceAttribute : System.Attribute
     {
         public string ClassKey { get; set; }
