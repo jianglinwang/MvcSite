@@ -59,5 +59,14 @@ namespace Resources {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   查找类似 User name 的本地化字符串。
+        /// </summary>
+        internal static string USER_NAME {
+            get {
+                return ResourceManager.GetString("USER_NAME", resourceCulture);
+            }
+        }
     }
 }
