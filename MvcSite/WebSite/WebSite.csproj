@@ -151,12 +151,12 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Attribute\GlobalResourceAttribute.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="GlobalHelper\GlobalHelper.cs" />
+    <Compile Include="Models\UserModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -247,7 +247,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Models\" />
+    <Folder Include="Attribute\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
@@ -263,6 +263,16 @@
       <Generator>GlobalResourceProxyGenerator</Generator>
       <LastGenOutput>Website.zh-cn.designer.cs</LastGenOutput>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MvcSite.Core\MvcSite.Core.csproj">
+      <Project>{47ab43dd-5813-4fbe-bd80-32eccc9eb502}</Project>
+      <Name>MvcSite.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MvcSite.Dal\MvcSite.Dal.csproj">
+      <Project>{5b34afa6-c242-4714-949a-67804079472f}</Project>
+      <Name>MvcSite.Dal</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
