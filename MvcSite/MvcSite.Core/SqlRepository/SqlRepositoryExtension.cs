@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace MvcSite.Core.SqlRepository
@@ -22,12 +18,44 @@ namespace MvcSite.Core.SqlRepository
                 {
                     await conn.OpenAsync();
 
-                    await sqlCommand.ExecuteNonQueryAsync();
-
                     var adapter = new SqlDataAdapter(sqlCommand);
                     adapter.Fill(dt);
                 }
                 finally { conn.Close(); }
+            }
+        }
+
+        public static async Task Execute(this ISqlRepository repository, string name)
+        {
+            using (var conn = repository.Create())
+            {
+                var transaction = conn.BeginTransaction();
+
+                var sqlCommand = conn.CreateCommand();
+                sqlCommand.CommandText = name;
+                sqlCommand.CommandType = CommandType.StoredProcedure;
+                sqlCommand.Transaction = transaction;
+
+                try
+                {
+                    await conn.OpenAsync();
+                    await sqlCommand.ExecuteNonQueryAsync();
+                    transaction.Commit();
+                }
+                catch
+                {
+                    try
+                    {
+                        transaction.Rollback();
+                    }
+                    catch
+                    {
+                    }
+                }
+                finally
+                {
+                    conn.Close();
+                }
             }
         }
     }
