@@ -1,9 +1,15 @@
-﻿using NPOI.XSSF.UserModel;
+﻿using MvcSite.Core.Attribute;
+using NPOI.XSSF.UserModel;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using WebSite.Models;
+using WebSite.GlobalHelper;
+using MvcSite.Core.Extension;
 
 namespace WebSite.Controllers
 {
@@ -12,18 +18,33 @@ namespace WebSite.Controllers
         //
         // GET: /User/
 
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
+            var result = await new UserModel().GetUserList();
+
+            new ExportUtily().GetHeader(result);
             return View();
         }
 
 
+        public FileResult Export()
+        { 
+            var result = new UserModel().GetUserList().Result;
+
+            using (var sream = new ExportUtily().GetHeader(result))
+            {
+                DateTime dt = DateTime.Now;
+                var userId = 089;
+                string dateTime = dt.ToString("yyMMddHHmmssfff");
+                string fileName = "Registration list page" + userId + "_" + dateTime + ".xlsx";
+                //AppUtility.InsertUserExportCount(userId, exportCount);
+                return File(sream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
+        }
+
         //public FileResult Export(string keyword = "", string filter = "", string order = "", string validCount = "")
         //{
-        //    string userId = User.Id.ToString();
-        //    var actualCount = AppUtility.GetUserExportCount(userId);
-        //    var exportCount = validCount.ToInt() <= actualCount.ToInt() ? validCount : actualCount;
-        //    var registrationExport = Model.ExportRegistrationInfoToExcel(keyword, filter, order, exportCount);
+        //    var registrationExport = new UserModel().GetUserList().Result;
         //    XSSFWorkbook book = new XSSFWorkbook();
         //    NPOI.SS.UserModel.ISheet sheet1 = book.CreateSheet("Sheet1");
         //    NPOI.SS.UserModel.IRow row0 = sheet1.CreateRow(0);
@@ -83,12 +104,55 @@ namespace WebSite.Controllers
         //    }
         //    // 写入到客户端   
         //    DateTime dt = DateTime.Now;
+        //    var userId = 089;
         //    string dateTime = dt.ToString("yyMMddHHmmssfff");
         //    string fileName = "Registration list page" + userId + "_" + dateTime + ".xlsx";
-        //    FileStream fs = new FileStream(string.Format(@"{0}\RegistrationExport\{1}", AppConstants.ExportPath, fileName), FileMode.Create);
+        //    FileStream fs = new FileStream(string.Format(@"{0}\RegistrationExport\{1}", Directory.GetCurrentDirectory(), fileName), FileMode.Create);
         //    book.Write(fs);
-        //    AppUtility.InsertUserExportCount(userId, exportCount);
-        //    return File(string.Format(@"{0}\RegistrationExport\{1}", AppConstants.ExportPath, fileName), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+        //    //AppUtility.InsertUserExportCount(userId, exportCount);
+        //    return File(string.Format(@"{0}\RegistrationExport\{1}", Directory.GetCurrentDirectory(), fileName), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
         //}
+
+        public class ExportUtily
+        {
+            public MemoryStream GetHeader<T>(IEnumerable<T> model) where T : class
+            {
+                var type = typeof(T);
+
+                var culture = System.Threading.Thread.CurrentThread.CurrentCulture;
+
+
+                XSSFWorkbook book = new XSSFWorkbook();
+                NPOI.SS.UserModel.ISheet sheet1 = book.CreateSheet("Sheet1");
+                NPOI.SS.UserModel.IRow row0 = sheet1.CreateRow(0);
+                NPOI.SS.UserModel.IRow row1 = sheet1.CreateRow(1);
+                row0.CreateCell(0).SetCellValue("Resources.Common.EXPORTNOTICE");
+                var properti = type.GetProperties().Where(d => Attribute.GetCustomAttribute(d, typeof(GlobalResourceAttribute)) != null).ToList().Select(
+                    t => 
+                        GlobalHelper.GlobalHelper.GetGlobalResource(type, t, culture));
+
+                properti.ForEach((str, i) => row1.CreateCell(i).SetCellValue(str));
+
+
+                var result = model.Select(row => 
+                {
+                   return type.GetProperties().Where(d => d.CustomAttributes.Any(t => t.AttributeType == typeof(GlobalResourceAttribute))).Select(t =>
+                {
+                    return t.GetValue(row, null).ToString();
+                });
+                });
+
+                result.ForEach((ob, index) =>
+                {
+                    var current= sheet1.CreateRow(index + 2);
+                    ob.ForEach((a, d) => current.CreateCell(d).SetCellValue(a));
+                });
+
+                MemoryStream stream = new MemoryStream();
+                book.Write(stream);
+
+                return stream;
+            }
+        }
     }
 }

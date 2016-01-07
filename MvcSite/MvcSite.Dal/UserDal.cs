@@ -6,7 +6,7 @@ namespace MvcSite.Dal
 {
     public class UserDal
     {
-        public ISqlRepository SqlRepository { get { return new SqlRepository(); } }
+        internal ISqlRepository SqlRepository { get { return new SqlRepository(); } }
 
         public async Task<DataTable> GetUserList()
         {

@@ -273,6 +273,10 @@
       <Project>{5b34afa6-c242-4714-949a-67804079472f}</Project>
       <Name>MvcSite.Dal</Name>
     </ProjectReference>
+    <ProjectReference Include="..\MvcSite.ViewModels\MvcSite.ViewModels.csproj">
+      <Project>{220cdef7-a7e1-4170-9a49-476f7c38ab64}</Project>
+      <Name>MvcSite.ViewModels</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
