@@ -42,7 +42,6 @@
   <ItemGroup>
     <Compile Include="Attribute\GlobalResourceAttribute.cs" />
     <Compile Include="Extension\IEnumerableExtension.cs" />
-    <Compile Include="Extension\ISheetExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SqlRepository\ISqlRepository.cs" />
     <Compile Include="SqlRepository\SqlRepository.cs" />
