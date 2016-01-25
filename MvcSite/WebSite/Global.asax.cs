@@ -23,5 +23,9 @@ namespace WebSite
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
         }
+
+        protected void Application_PostAuthorizeRequest(object sender, EventArgs args)
+        {
+        }
     }
 }

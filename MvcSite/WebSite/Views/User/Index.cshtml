@@ -5,5 +5,10 @@
 
 <h2>Index</h2>
 <span>
-
+    @using(Html.BeginForm("Login", "User")){
+        @Html.AntiForgeryToken()
+        <input type="text" name="username"/>
+        <input type="password" name="password" />
+        <input type="submit"/>
+    }
 </span>

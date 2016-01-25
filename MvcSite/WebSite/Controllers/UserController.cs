@@ -7,8 +7,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Security;
 using WebSite.Models;
-using WebSite.GlobalHelper;
 using MvcSite.Core.Extension;
 
 namespace WebSite.Controllers
@@ -20,15 +20,21 @@ namespace WebSite.Controllers
 
         public async Task<ActionResult> Index()
         {
-            var result = await new UserModel().GetUserList();
+            //var result = await new UserModel().GetUserList();
 
-            new ExportUtily().GetHeader(result);
+            //new ExportUtily().GetHeader(result);
             return View();
         }
 
-        public ActionResult Login()
+        public void Login(FormCollection parameter)
         {
+            var userName = parameter["username"];
+            var password = parameter["password"];
 
+            var ticket = new FormsAuthenticationTicket(userName, false, 10);
+            var encriptedTicket = FormsAuthentication.Encrypt(ticket);
+            var cookie = new HttpCookie(FormsAuthentication.FormsCookieName, encriptedTicket);
+            Response.Cookies.Add(cookie);
         }
 
 
@@ -126,7 +132,6 @@ namespace WebSite.Controllers
 
                 var culture = System.Threading.Thread.CurrentThread.CurrentCulture;
 
-
                 XSSFWorkbook book = new XSSFWorkbook();
                 NPOI.SS.UserModel.ISheet sheet1 = book.CreateSheet("Sheet1");
                 NPOI.SS.UserModel.IRow row0 = sheet1.CreateRow(0);
@@ -137,7 +142,6 @@ namespace WebSite.Controllers
                         GlobalHelper.GlobalHelper.GetGlobalResource(type, t, culture));
 
                 properti.ForEach((str, i) => row1.CreateCell(i).SetCellValue(str));
-
 
                 var result = model.Select(row => 
                 {
