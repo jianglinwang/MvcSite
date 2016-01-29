@@ -6,6 +6,7 @@ using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using System.Web.Security;
 
 namespace WebSite
 {
@@ -26,6 +27,9 @@ namespace WebSite
 
         protected void Application_PostAuthorizeRequest(object sender, EventArgs args)
         {
+            var user = HttpContext.Current.User;
+
+            if (user.Identity.IsAuthenticated && user.Identity.AuthenticationType == FormsAuthentication.FormsCookieName) return;
         }
     }
 }
